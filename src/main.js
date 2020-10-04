@@ -1,49 +1,72 @@
-const opts = {
-    channels: [
-        twitchChannel
-    ]
-};
+const actionHandlers = {};
 
-let actionHandlers = {};
-let allHandlers = [];
+((config, log) => {
+    const
+        processCommand = (target, context, msg, self) => {
 
-// Create a client with our options defined at the top of the file
-let client = new tmi.client(opts);
+            const spaceIndex = msg.indexOf(" ");
+            const command = (spaceIndex > -1) ? msg.substring(0, spaceIndex) : msg;
+            const parsedMessage = (spaceIndex > -1) ? msg.substring(spaceIndex + 1) : "";
 
-// Register our event handlers (defined below)
-client.on('message', onMessageHandler);
-client.on('connected', onConnectedHandler);
+            if (actionHandlers[command] && actionHandlers[command].security(context, command)) {
+                actionHandlers[command].handle(context, parsedMessage);
+            }
+        },
 
-// Connect to Twitch:
-client.connect();
+        processMessage = (target, context, message, self) => {
+            if(self) return;
+            
+            const messageType = context["message-type"];
 
-// Called every time a message comes in
-function onMessageHandler(target, context, msg, self) {
-    // Remove whitespace from chat message
-    const command = msg.trim();
+            log(`Non-command message messageType:${messageType}, message:${message}`);
+            
+            // Handle different message types..
+            switch (messageType) {
+                case "action":
+                    // This is an action message..
+                    break;
+                case "chat":
+                    // This is a chat message..
+                    break;
+                case "whisper":
+                    // This is a whisper..
+                    break;
+                default:
+                    // Something else ?
+                    break;
+            }
+        },
 
-    let handlerName;
-    if (command.indexOf(" ") > -1) {
-        handlerName = command.substring(0, command.indexOf(" "));
-    } else {
-        handlerName = command;
-    }
+        onMessage = (target, context, msg, self) => {
 
-    console.log(handlerName);
+            if (config.debug) log("onMessage", target, context, msg, self);
 
-    // Handle the rest of chat not using commands
-    for (const handler of allHandlers) {
-        if (handler.security(context, command)) {
-            handler.handle(context, command);
-        }
-    }
+            const message = msg.trim();
+            const isCommand = message.charAt(0) === "!";
 
-    // Check all commands
-    if (actionHandlers[handlerName] && actionHandlers[handlerName].security(context, command)) {
-        actionHandlers[handlerName].handle(context, command);
-    }
-}
+            if (isCommand) processCommand(target, context, message, self);
+            else processMessage(target, context, message, self);
+        },
 
-function onConnectedHandler(addr, port) {
-    console.log(`* Connected to ${addr}:${port}`);
-}
+        onConnected = (addr, port) => {
+            log(`* Connected to ${addr}:${port}`);
+            client.say(config.channel, `[mikebot] Connected.`);
+        },
+
+        clientConfig = {
+            options: { debug: config.debug, clientId: config.clientId },
+            connection: { reconnect: true, secure: true },
+            identity: config.identity,
+            channels: [config.channel]
+        };
+
+
+    // connect    
+    const client = new tmi.client(clientConfig)
+        .on('message', onMessage)
+        .on('connected', onConnected)
+        .on("clearchat", () => popup.delete());
+
+    client.connect();
+
+})(config, console.log);
