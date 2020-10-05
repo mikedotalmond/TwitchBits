@@ -1,8 +1,6 @@
 /**
  * Globals... :\
  */
-const actionHandlers = {};
-
 
 ((config, log) => {
 
@@ -14,6 +12,7 @@ const actionHandlers = {};
     };
 
     const
+        actions = config.actions,
         channel = config.channel,
         strings = config.strings,
         sayFromChannel = (message) => client.say(channel, message),
@@ -67,7 +66,7 @@ const actionHandlers = {};
          * Takes a command string and processes it. 
          * A command string should start with an "!" and be immediately followed by a command word.
          * 
-         * Further message content after the command sequence (separated by a space) will be passed to the associated actionHandler
+         * Further message content after the command sequence (separated by a space) will be passed to the associated action handler
          * see handlers.js
          * 
          * Example:
@@ -87,8 +86,8 @@ const actionHandlers = {};
             if (sanitisedCommand == null) return;
 
             command = `!${sanitisedCommand}`;
-            if (actionHandlers[command] && actionHandlers[command].security(context, command)) {
-                actionHandlers[command].handle(context, parsedMessage);
+            if (actions.hasOwnProperty(command) && actions[command].security(context, command)) {
+                actions[command].handle(context, parsedMessage);
             }
         },
 

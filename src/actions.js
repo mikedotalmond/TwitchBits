@@ -2,7 +2,10 @@
 // Command: !alert <text>
 // Description: will display whatever text comes after the !alert command
 // =======================================
-actionHandlers['!alert'] = {
+
+const actions = {};
+
+actions['!alert'] = {
     security: (context, textContent) => {
         return context.mod || (context["badges-raw"] != null && context["badges-raw"].startsWith("broadcaster"))
     },
@@ -18,7 +21,7 @@ actionHandlers['!alert'] = {
 // Command: !delete
 // Description: This delete command resets the whole pop up system
 // =======================================
-actionHandlers['!delete'] = {
+actions['!delete'] = {
     security: (context, textContent) => {
         return context.mod || (context["badges-raw"] != null && context["badges-raw"].startsWith("broadcaster"))
     },
@@ -26,3 +29,5 @@ actionHandlers['!delete'] = {
         popup.delete();
     }
 };
+
+settings.actions = actions;
