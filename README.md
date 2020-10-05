@@ -21,6 +21,7 @@ Create it yourself and add the following, filling with your own values as needed
 const config = {
     debug: true, 
     channel : 'YOUR_CHANNELID_HERE',
+    botMessagePrefix: "[my-bot] ", // prefix all bot-sent messages with this
     clientId : "[YOUR_TWITCH_APP_CLIENTID_HERE]",
     identity: {
 		username: '[YOUR_TWITCH_APP_NAME_HERE]',
