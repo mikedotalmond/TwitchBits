@@ -1,6 +1,8 @@
 # ~~TwitchPopups~~ TwitchBits
 Based on a fork of Limmy's [TwitchPopups](https://github.com/DaftLimmy/TwitchPopups) - you should probably just go there.
 
+Provides simple text-popups, overlays, and some basic chatbot behaviours driven by commands issued in your Twitch chat.
+
 ***
 
 ## So what's this for then?
