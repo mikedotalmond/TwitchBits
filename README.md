@@ -1,13 +1,13 @@
-# ~~TwitchPopups~~ TwitchThings
-A fork of Limmy's [TwitchPopups](https://github.com/DaftLimmy/TwitchPopups) - you should probably just go there.
+# ~~TwitchPopups~~ TwitchBits
+Based on a fork of Limmy's [TwitchPopups](https://github.com/DaftLimmy/TwitchPopups) - you should probably just go there.
 
 ***
 
 ## So what's this for then?
-- Learning a bit of tmi / Twitch
+- Learning a bit more about tmi / Twitch
 - Reworking things to suit my own needs
 - Adding a basic utility/helper chatbot
-- Tweaking popup style/behaviour
+- Tweaking popup style/behaviours
 
 
 
