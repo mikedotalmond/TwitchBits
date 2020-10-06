@@ -2,6 +2,7 @@
 Based on a fork of Limmy's [TwitchPopups](https://github.com/DaftLimmy/TwitchPopups) - you should probably just go there.
 
 Provides simple text-popups, overlays, and some basic chatbot behaviours driven by commands issued in your Twitch chat.
+At some point I'll be using it on my own [Twitch streams](https://twitch.tv/mikedotalmond) 
 
 ***
 
