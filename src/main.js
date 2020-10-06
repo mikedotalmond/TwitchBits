@@ -154,13 +154,14 @@
         // start-up
         onConnect = (addr, port) => {
             log(`* Connected to ${addr}:${port}`);
-            sayFromChannelBot("Connected.");
+            // if(config.debug) sayFromChannelBot("Connected.");
+            overlays.popup.show(`${config.botMessagePrefix} Ready`.toUpperCase(), 5, {'font-size':'24px', color:'green'});
         },
 
         // shutdown ongoing processes
         onDisconnect = reason => {
             log(`onDisconnect ${reason}`);
-            popup.showText(`${config.botMessagePrefix} Disconnected!`);
+            overlays.popup.show(`${config.botMessagePrefix} Disconnected!`, 15, {'font-size':'24px', color:'red'});
         },
 
         setupClient = () => {
@@ -168,7 +169,7 @@
                 .on('message', onMessage)
                 .on('connected', onConnect)
                 .on('disconnected', onDisconnect)
-                .on("clearchat", () => popup.delete())
+                .on("clearchat", () => overlays.popup.hide())
                 .on("cheer", (channel, userstate, message) => {
                     log("onCheer", userstate, message);
                 })
