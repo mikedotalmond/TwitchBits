@@ -31,8 +31,7 @@ const chatbot = { connected: false, client: null };
         },
 
 
-
-        // TODO: implament a more useful message sanitizer/monitor and implement response messaging. 
+        // TODO: implement a more useful message sanitizer/monitor and implement response messaging. 
         // for now it only filters ALL CAPS messages
         sanitiseMessage = message => {
             if (message == null || message.length == 0) return { ok: false, reason: null, message: null };
@@ -120,32 +119,10 @@ const chatbot = { connected: false, client: null };
             }
         },
 
-        onMessage = (target, context, msg, self) => {
-            if(self) return;
-
-            if (config.debug) log("onMessage", target, context, msg, self);
-
-            const message = msg.trim();
-            const isCommand = message.charAt(0) === "!";
-
-            if (isCommand) processCommand(context, message, self);
-            else processMessage(context, message, self);
-        },
-
-        // start-up
-        onConnect = (addr, port) => {
-            log(`* Connected to ${addr}:${port}`);
-            overlays.popup.show(`${config.botMessagePrefix} Ready`.toUpperCase(), 5, { 'font-size': '24px', color: 'green' });
-            chatbot.connected = true;
-        },
-
-        // shutdown ongoing processes
-        onDisconnect = reason => {
-            log(`onDisconnect ${reason}`);
-            overlays.popup.show(`${config.botMessagePrefix} Disconnected!`, 0, { 'font-size': '24px', color: 'red' });
-            chatbot.connected = false;
-        },
-
+        
+        /**
+         * 
+         */
         setupClient = () => {
             client = new tmi.client(clientConfig)
                 .on('message', onMessage)
@@ -174,6 +151,34 @@ const chatbot = { connected: false, client: null };
                 });
 
             client.connect();
+        },
+
+        onMessage = (target, context, msg, self) => {
+            if(self) return;
+
+            if (config.debug) log("onMessage", target, context, msg, self);
+
+            const message = msg.trim();
+            const isCommand = message.charAt(0) === "!";
+
+            if (isCommand) processCommand(context, message, self);
+            else processMessage(context, message, self);
+        },
+
+        // start-up
+        onConnect = (addr, port) => {
+            log(`* Connected to ${addr}:${port}`);
+            overlays.popup.show(`${config.botMessagePrefix} Ready`.toUpperCase(), 5, { 'font-size': '24px', color: 'green' });
+            chatbot.connected = true;
+            actions.init();
+        },
+
+        // shutdown ongoing processes
+        onDisconnect = reason => {
+            log(`onDisconnect ${reason}`);
+            chatbot.connected = false;
+            overlays.popup.show(`${config.botMessagePrefix} Disconnected!`, 0, { 'font-size': '24px', color: 'red' });
+            actions.stopAutoActions();
         },
 
         /**

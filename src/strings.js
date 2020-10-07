@@ -6,8 +6,8 @@ settings.strings = {
     //
     // public bot command responses
     "bot_!help": ["Available chat commands are: !help !what !prime !computer !camera !microphone !work !social !twitter !github !soundcloud !superrare"],
-    "bot_!what": ["Mike is using code to make music, art, and other bits and bobs. mikedotalmond.co.uk"],
-    "bot_!prime": ["If you already have Amazon Prime you can financially support me - at no extra cost to yourself! Simply go to gaming.amazon.com to link your accounts, then come back here and 'Subscribe' with your FREE Prime Sub! 😍"],
+    "bot_!what": ["Hello friend! Mike is using code to make music, art, and other bits and bobs. mikedotalmond.co.uk"],
+    "bot_!prime": ["If you already have Amazon Prime you can financially support me, once a month, at no extra cost to yourself! Simply go to gaming.amazon.com to link your accounts, then come back here and 'Subscribe' with your FREE Prime Sub! 😍"],
 
     // streaming setup
     "bot_!computer": ["Mike is streaming from a Windows 10 laptop using OBS [i7 9750H, 32GB DDR4, RTX 2060]"],

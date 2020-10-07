@@ -1,3 +1,11 @@
+/**
+ * Trigger things and respond to your Twitch chat messages using !commands
+ * 
+ * Give you and your mods control over overlay elements, messages, popups.
+ * Respond to chat commands like !help !what and more.
+ * 
+ * The message strings referenced here can all be found in strings.js
+ */
 ((log) => {
 
     let
@@ -5,13 +13,12 @@
         autoActionIndex = 0;
 
     const
-
         actions = {},
 
         // action ids for periodic auto-bot messaging
         autoActions = ["!help", "!what", "!prime", "!work", "!social", "!twitter", "!github", "!superrare", "!soundcloud"],
         autoActionsOrder = utils.randomIndexArray(autoActions.length),
-        autoActionTimes = settings.debug ? { min: 0.25 * 60, max: 2 * 60 } : { min: 2 * 60, max:10 * 60 },
+        autoActionTimes = { min: 5 * 60, max: 10 * 60 },
 
         /**
          * is the user the current broadcaster?
@@ -26,12 +33,12 @@
         /**
          * setup a named text query action.
          * 
-         * Example: Passing an actionName of "!commands" will set up the action command "!commands" for users to say in the chat,
-         * which will cause the bot to respond using the `bot_!commands` string field (see strings.js)
+         * Example: Passing an actionName of "!help" will set up the action command "!help" 
+         * When users enter that in the chat the bot will respond to the chat using the `bot_!help` string field (see strings.js)
          */
         registerSimpleTextQueryChatAction = (actionName) => {
             actions[actionName] = {
-                security: (_, __) => true,
+                security: (_, __) => true, // all users are allowed
                 handle: (_, __) => {
                     if (chatbot.connected) chatbot.say(utils.randomStringFromSet(`bot_${actionName}`, settings.strings));
                 }
@@ -40,11 +47,11 @@
 
         /*
           * Public / General commands - typically just things for the chatbot to respond to.
-          * Add/Remove entries here as needed, updating the associated content in strings.js as you go.
+          * Add/Remove/Edit entries here as needed, updating the associated content in strings.js as you go.
           * 
           * Commands: Various, see below.
           * Description: General info, see strings.js for all the definitions
-          * Security: Anyone can use these commands
+          * Security: Anyone in the chat can use these commands
           */
         initPublicChatActions = () => {
             registerSimpleTextQueryChatAction("!help");
@@ -64,7 +71,7 @@
         },
 
         /**
-         * Private: Mod/Broadcaster commands to control on-screen overlays/popups, etc.
+         * Private: Mod/Broadcaster commands to control on-screen overlays/popups/tasks, etc.
          */
         initPrivateChatActions = () => {
             /**
@@ -94,17 +101,11 @@
             */
             actions['!autoChat_start'] = {
                 security: privateSecurityCheck,
-                handle: (context, textContent) => {
-                    log("!autoChat:start received");
-                    startAutoActions();
-                }
+                handle: (context, textContent) => { startAutoActions(); }
             };
             actions['!autoChat_stop'] = {
                 security: privateSecurityCheck,
-                handle: (context, textContent) => {
-                    log("!autoChat_stop received");
-                    stopAutoActions();
-                }
+                handle: (context, textContent) => { stopAutoActions(); }
             };
         },
 
@@ -116,22 +117,22 @@
 
             stopAutoActions();
 
-            log("actions::startAutoActions");
-            log("actions are:", autoActions);
-            log("action order:", autoActionsOrder);
+            // log("actions::startAutoActions");
+            // log("actions are:", autoActions);
+            // log("action order:", autoActionsOrder);
 
             const time = autoActionTimes.min + Math.random() * (autoActionTimes.max - autoActionTimes.min);
-            log("action timeout time: " + time);
+            log(`next auto chat action in ${time} seconds`);
 
             autoActionTimeout = setTimeout(() => {
                 const act = autoActions[autoActionsOrder[autoActionIndex]];
 
-                log("actions - triggering autoAction", act);
+                // log("actions - triggering autoAction", act);
                 actions[act].handle();
                 autoActionIndex++;
 
                 if (autoActionIndex >= autoActionsOrder.length) {
-                    log("autoActions complete, reshuffling and starting again.");
+                    // log("autoActions complete, reshuffling and starting again.");
                     autoActionsOrder.sort(utils.randomSort);
                     autoActionIndex = 0;
                 }
@@ -141,20 +142,30 @@
             }, time * 1000);
         },
 
+        /**
+         * Stop auto chat stuff
+         */
         stopAutoActions = () => {
             clearTimeout(autoActionTimeout);
             autoActionTimeout = -1;
         },
 
 
-        /** init all actions */
+        /** init all actions, start auto-chat */
         init = () => {
             log("actions::init");
             initPublicChatActions();
             initPrivateChatActions();
             startAutoActions();
+
+            // send initial 'what the channel is' message on startup...
+            actions["!help"].handle();
         };
 
+    // 
+    actions.init = init;
+    actions.startAutoActions = startAutoActions;
+    actions.stopAutoActions = stopAutoActions;
 
     //
     // store
@@ -162,6 +173,6 @@
 
     //
     // start
-    init();
+    // init();
 
 })(console.log);
