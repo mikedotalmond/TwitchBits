@@ -19,7 +19,7 @@ const chatbot = { connected: false, client: null };
         /**
          * Delete a chat message by id, and respond via the bot in chat if responseKey is set/exists in the strings data.
          */
-        deleteMessageAndRespond = (messageId, responseKey) => {
+        deleteMessageAndRespond = (context, responseKey) => {
             client
                 .deletemessage(channel, context.id)
                 .finally(() => {
@@ -87,7 +87,7 @@ const chatbot = { connected: false, client: null };
 
             if (!messageResult.ok) {
                 log("Message failed validation. Will delete", messageResult);
-                deleteMessageAndRespond(context.id, messageResult.reason);
+                deleteMessageAndRespond(context, messageResult.reason);
                 // invalid messages are ignored from further processing.
                 return;
             } 
